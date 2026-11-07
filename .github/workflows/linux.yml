@@ -78,6 +78,16 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Cache apt packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          /var/cache/apt/archives
+          /var/lib/apt/lists
+        key: apt-${{ matrix.OS || 'ubuntu-22.04' }}-v1
+        restore-keys: |
+          apt-${{ matrix.OS || 'ubuntu-22.04' }}-
+
     - name: 'Create Build Environment'
       run: |
         sudo apt update -y
@@ -107,8 +117,8 @@ jobs:
 
         rm -f ./Content/Translations/*.po
 
-        # The ubuntu-24.04 system libopenmpt.so has undefined mpg123_*64 symbols but is underlinked (libmpg123 is
-        # not in its DT_NEEDED), so the final link fails. Explicitly link libmpg123 (installed below) after all
+        # The ubuntu-24.04 system libopenmpt.so has undefined mpg123_*64 symbols but is underlinked (libmpg123
+        # is not in its DT_NEEDED), so the final link fails. Explicitly link libmpg123 (installed below) after all
         # target libraries via CMAKE_CXX_STANDARD_LIBRARIES, which appends it at the end of every link line so it
         # resolves libopenmpt's references regardless of --as-needed.
         extraArgs=""
@@ -204,6 +214,16 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Cache apt packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          /var/cache/apt/archives
+          /var/lib/apt/lists
+        key: apt-ubuntu-22.04-v1
+        restore-keys: |
+          apt-ubuntu-22.04-
+
     - name: 'Create Build Environment'
       run: |
         sudo apt-get update -y
@@ -283,6 +303,16 @@ jobs:
       uses: actions/checkout@v6
       with:
         fetch-depth: 0
+
+    - name: Cache apt packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          /var/cache/apt/archives
+          /var/lib/apt/lists
+        key: apt-ubuntu-latest-v1
+        restore-keys: |
+          apt-ubuntu-latest-
 
     - name: 'Initialize CodeQL'
       uses: github/codeql-action/init@v4
